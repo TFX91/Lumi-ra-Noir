@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privátna objednávka – Lumièra Noir</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+:root{
+  --text:#fff;
+  --gold:#c9b46d;
+  --panel-bg: rgba(0,0,0,0.05);
+  --input-bg: rgba(0,0,0,0.15);
+}
+
+/* LOGO */
+.logo{
+  animation:pulse 2s infinite;
+  color:var(--gold);
+  font-family:'Playfair Display', serif;
+  font-weight:600;
+  letter-spacing:.2em;
+  font-size:1.6rem;
+}
+@keyframes pulse{
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.08);opacity:.8}
+  100%{transform:scale(1);opacity:1}
+}
+
+/* FIXNÝ KOLEKČNÝ PANEL */
+.collection-selector{
+  position:fixed;
+  top:88px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:160;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+  width:min(92vw,1180px);
+  padding:14px 20px;
+  background:rgba(0,0,0,0);
+  transition:opacity .6s ease;
+}
+.collection-selector.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+.collection-selector button{
+  padding:8px 20px;
+  border-radius:14px;
+  border:1px solid rgba(179,107,255,.18);
+  background:rgba(0,0,0,0.15);
+  color:var(--text);
+  letter-spacing:.12em;
+  cursor:pointer;
+  transition:.25s, transform .3s;
+}
+.collection-selector button:hover{
+  background:rgba(179,107,255,.25);
+  box-shadow:0 0 14px rgba(179,107,255,.55);
+  transform:scale(1.05);
+}
+.collection-selector button.active{
+  background:rgba(179,107,255,.38);
+  box-shadow:
+    0 0 20px rgba(179,107,255,.75),
+    inset 0 0 14px rgba(255,255,255,.15);
+}
+
+/* SECTION PADDING */
+.section{padding-top:140px}
+
+/* FLEX LAYOUT */
+.private-order-container{
+  display:flex;
+  justify-content:flex-start;
+  gap:40px;
+  align-items:flex-start;
+  position:relative;
+}
+
+/* LEFT PANEL FIX + SCROLLABLE CONTENT */
+.private-order-left {
+  position: fixed;
+  top: 170px;
+  left: 40px;
+  width: 360px;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: 24px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+/* SCROLLBAR – jednotný luxusný */
+.private-order-left::-webkit-scrollbar,
+.center-scroll::-webkit-scrollbar,
+.private-order-right::-webkit-scrollbar{
+  width: 6px;
+}
+.private-order-left::-webkit-scrollbar-thumb,
+.center-scroll::-webkit-scrollbar-thumb,
+.private-order-right::-webkit-scrollbar-thumb{
+  background: rgba(179,107,255,.4);
+  border-radius: 6px;
+}
+.private-order-left::-webkit-scrollbar-track,
+.center-scroll::-webkit-scrollbar-track,
+.private-order-right::-webkit-scrollbar-track{
+  background: transparent;
+}
+
+/* CENTER PANEL FIX */
+.private-order-center{
+  position: fixed;
+  top:170px;
+  left:50%;
+  transform:translateX(-180px);
+  width:360px;
+  z-index:10;
+  border-radius:24px;
+  padding:24px;
+  background:var(--panel-bg);
+  backdrop-filter:blur(22px);
+
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 200px);
+}
+
+/* scrollovateľný obsah stredného panela */
+.center-scroll {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+/* tlačidlo vždy viditeľné */
+.sticky-btn {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: none;
+  background: rgba(179,107,255,.38);
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 0 20px rgba(179,107,255,.75),
+    inset 0 0 14px rgba(255,255,255,.15);
+  transition: 0.3s;
+}
+.sticky-btn:hover {
+  background: rgba(179,107,255,.55);
+  box-shadow: 0 0 30px rgba(179,107,255,.85);
+}
+
+/* SHOWROOM EFFECTS */
+.private-order-center.showroom{
+  background:radial-gradient(circle at center, rgba(179,107,255,.2), rgba(0,0,0,.6));
+  border:1px solid rgba(179,107,255,.35);
+  box-shadow:0 0 40px rgba(179,107,255,.3), inset 0 0 60px rgba(0,0,0,.6);
+  transition:all .6s ease;
+}
+.private-order-center.showroom::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:radial-gradient(circle, rgba(179,107,255,.25), transparent 70%);
+  opacity:.4;
+  animation:showroomPulse 12s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes showroomPulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.12);}
+}
+.private-order-center.showroom img{
+  width:100%;
+  border-radius:20px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .6s ease, transform .6s ease, box-shadow .6s ease;
+}
+.private-order-center.showroom img.show{
+  opacity:1;
+  transform:translateY(0);
+  box-shadow:0 0 60px rgba(179,107,255,.6),0 0 120px rgba(179,107,255,.35);
+}
+.private-order-center.showroom:hover img{
+  transform:scale(1.06) rotateX(1deg) rotateY(1deg);
+  box-shadow:0 0 80px rgba(179,107,255,.7), 0 0 140px rgba(179,107,255,.4);
+  filter:drop-shadow(0 0 12px rgba(179,107,255,.5));
+}
+.private-order-center.showroom h3{
+  margin-top:20px;
+  font-size:1.2rem;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  color:var(--gold);
+  text-shadow:0 0 14px rgba(201,180,109,.5);
+}
+.private-order-center.showroom label{
+  font-size:.75rem;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  opacity:.8;
+  color:var(--text);
+  display:block;
+  margin-top:12px;
+}
+
+/* RIGHT PANEL FIX */
+.private-order-right{
+  position:fixed;
+  top:170px;
+  right:40px;
+  width:300px;
+  border-radius:24px;
+  padding:24px;
+  background:var(--panel-bg);
+  backdrop-filter:blur(12px);
+  max-height:calc(100vh - 200px);
+  overflow-y:auto; /* jednotný scroll */
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* INPUT & TEXTAREA – luxusný vizuál jednotný */
+.private-order-right input,
+.private-order-right textarea{
+  width:100%;
+  padding:10px 14px;
+  border-radius:14px;
+  border:none;
+  background:rgba(0,0,0,0.15);
+  color:#fff;
+  font-family:'Inter', sans-serif;
+  font-size:0.95rem;
+  resize:none;
+  box-shadow:
+    0 0 12px rgba(179,107,255,.35),
+    inset 0 0 8px rgba(255,255,255,.1);
+  transition:0.3s;
+}
+.private-order-right input:focus,
+.private-order-right textarea:focus{
+  outline:none;
+  background:rgba(0,0,0,0.25);
+  box-shadow:
+    0 0 16px rgba(179,107,255,.55),
+    inset 0 0 12px rgba(255,255,255,.15);
+}
+
+/* textarea optimalna velkost */
+.private-order-right textarea{
+  min-height:80px;
+  max-height:150px;
+}
+
+/* RIGHT PANEL BUTTON – VIZUÁL 1:1 so sticky-btn */
+#sendPrivateOrder{
+  width:100%;
+  padding:12px;
+  border-radius:16px;
+  border:none;
+  background:rgba(179,107,255,.38);
+  color:#fff;
+  cursor:pointer;
+  box-shadow:
+    0 0 20px rgba(179,107,255,.75),
+    inset 0 0 14px rgba(255,255,255,.15);
+  transition:0.3s;
+}
+#sendPrivateOrder:hover{
+  background:rgba(179,107,255,.55);
+  box-shadow:0 0 30px rgba(179,107,255,.85);
+}
+
+/* PRODUCTS */
+.product{
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;
+  padding:12px;
+  margin-bottom:12px;
+  transition:.3s, transform .4s, opacity .4s;
+}
+.product:hover{
+  transform:scale(1.04);
+  box-shadow:0 0 40px rgba(179,107,255,.4);
+}
+.private-cart-item{
+  border-bottom:1px solid rgba(255,255,255,.1);
+  margin-bottom:8px;
+  padding-bottom:6px;
+  color:var(--text);
+}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .private-order-center{left:50%; transform:translateX(-50%);}
+  .private-order-right{right:20px;}
+}
+@media(max-width:768px){
+  .collection-selector{top:76px}
+  .collection-selector button{flex:1 1 46%}
+}
+@media(max-width:480px){
+  .collection-selector button{flex:1 1 100%}
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="bgParticles"></canvas>
+<div class="galaxy"></div>
+<div class="city"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Lumièra Noir</div>
+    <div class="menu">
+      <a href="index.html">Domov</a>
+      <a href="collection.html">Kolekcia</a>
+      <a href="vision.html">Vízia</a>
+      <a href="private-order.html" class="active">Privátna objednávka</a>
+      <a href="about.html">O nás</a>
+      <a href="cart.html">Košík</a>
+    </div>
+  </div>
+</nav>
+
+<section class="section">
+<h2>Privátna objednávka</h2>
+
+<div class="collection-selector">
+  <button data-collection="kids" class="active">Kids</button>
+  <button data-collection="mini">Mini</button>
+  <button data-collection="special">Special</button>
+  <button data-collection="events">Events</button>
+  <button data-collection="abstract">Abstract</button>
+</div>
+
+<div class="private-order-container">
+<div class="private-order-left" id="privateLeftCategories"></div>
+
+<div class="private-order-center showroom">
+  <div class="center-scroll">
+    <img id="previewImg">
+    <h3 id="previewName">Vyberte produkt</h3>
+    <label>Variant
+      <select id="previewProductVariantSelect">
+        <option>Klasik</option>
+        <option>Lacto-free</option>
+        <option>Bez lepku</option>
+        <option>Pre diabetikov</option>
+        <option>Veganské</option>
+      </select>
+    </label>
+    <label>Príchuť
+      <select id="previewFlavourSelect">
+        <option>Čokoládová</option>
+        <option>Jahodová</option>
+        <option>Vanilková</option>
+        <option>Orechová</option>
+      </select>
+    </label>
+    <label>Vizuál
+      <select id="previewVisualSelect">
+        <option value="clasik">Clasik</option>
+        <option value="limited">Limited</option>
+        <option value="uv">UV</option>
+      </select>
+    </label>
+    <label>Množstvo
+      <input type="number" id="previewQtyInput" min="1" value="1">
+    </label>
+    <p id="previewPrice"></p>
+  </div>
+  <button id="addToPrivateCart" class="sticky-btn">Pridať do dopytu</button>
+</div>
+
+<div class="private-order-right">
+  <h3>Váš dopyt</h3>
+  <div id="privateOrderList"></div>
+  <input placeholder="Meno">
+  <input placeholder="Priezvisko">
+  <input placeholder="Email">
+  <input placeholder="Telefón">
+  <textarea id="privateNotes" placeholder="Poznámka"></textarea>
+  <button id="sendPrivateOrder">Odoslať dopyt</button>
+</div>
+</div>
+</section>
+
+<footer>© 2026 Lumièra Noir · Návštevy: <span id="visits"></span></footer>
+
+<script src="js3/app.js"></script>
+<script src="js3/data/product.list.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+if(!window.artifactsState){
+  window.artifactsState={privateCart:[],behavior:{visits:0}};
+}
+
+artifactsState.behavior.visits++;
+document.getElementById("visits").innerText=artifactsState.behavior.visits;
+
+const left=document.getElementById("privateLeftCategories");
+const buttons=document.querySelectorAll(".collection-selector button");
+const selector=document.querySelector(".collection-selector");
+let current="kids";
+
+render(current);
+
+buttons.forEach(b=>{
+  b.onclick=()=>{
+    buttons.forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    current=b.dataset.collection;
+    render(current);
+  }
+});
+
+function render(col){
+  left.innerHTML="";
+  (JS3.data.products[col]||[]).forEach(p=>{
+    const d=document.createElement("div");
+    d.className="product";
+    d.innerHTML=`<h4>${p.name}</h4><p>${p.price}€</p>`;
+    d.onclick=()=>select(p);
+    left.appendChild(d);
+  });
+}
+
+function select(p){
+  const previewImg=document.getElementById("previewImg");
+  const previewName=document.getElementById("previewName");
+  const previewPrice=document.getElementById("previewPrice");
+
+  previewImg.src=p.image;
+  previewName.innerText=p.name;
+  previewPrice.innerText=p.price+"€";
+}
+
+document.getElementById("addToPrivateCart").onclick=()=>{
+  const previewName=document.getElementById("previewName");
+  if(previewName.innerText==="Vyberte produkt") return;
+  artifactsState.privateCart.push({
+    name:previewName.innerText,
+    price:document.getElementById("previewPrice").innerText
+  });
+  renderCart();
+};
+
+function renderCart(){
+  const list=document.getElementById("privateOrderList");
+  list.innerHTML="";
+  artifactsState.privateCart.forEach(i=>{
+    const d=document.createElement("div");
+    d.className="private-cart-item";
+    d.innerText=`${i.name} – ${i.price}`;
+    list.appendChild(d);
+  });
+}
+
+// Dynamický UV glow podľa myši
+const center=document.querySelector(".private-order-center.showroom");
+document.addEventListener("mousemove",(e)=>{
+  const x=e.clientX/window.innerWidth - 0.5;
+  const y=e.clientY/window.innerHeight - 0.5;
+  center.style.background=`radial-gradient(circle at ${50+x*20}% ${50+y*20}%, rgba(179,107,255,.25), rgba(0,0,0,.7))`;
+});
+
+});
+</script>
+
+</body>
+</html>

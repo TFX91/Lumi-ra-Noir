@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumièra Noir – Abstraktná Kolekcia</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* BACK TO COLLECTION */
+.back-link{
+  position:fixed;
+  top:90px;
+  left:30px;
+  font-family:Inter,sans-serif;
+  font-size:.75rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#c9b46d;
+  text-decoration:none;
+  transition:.3s;
+  z-index:50;
+}
+.back-link:hover{
+  color:0 0 14px rgba(179,107,255,.55);
+  transform:translateX(-4px);
+}
+
+/* malé ID na kartách produktu */
+.product {
+  position: relative;
+}
+.product-id {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Inter', sans-serif;
+}
+
+/* malé ID v modale */
+.modal-id {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-left: 8px;
+}
+
+/* Whisper info box */
+#whisper {
+  position: fixed;
+  bottom: 60px; /* tesne nad footerom */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(17,17,17,0.9);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 24px;
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  box-shadow: 0 0 20px var(--uv);
+  max-width: 90%;
+  z-index: 9999;
+}
+#whisper.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND EFFECTS -->
+<canvas id="bgParticles"></canvas>
+<div class="galaxy"></div>
+<div class="city"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Lumièra Noir</div>
+    <div class="menu">
+      <a href="index.html">Domov</a>
+      <a href="collection.html" class="active">Kolekcia</a>
+      <a href="vision.html">Vízia</a>
+      <a href="private-order.html">Vlastná objednávka</a>
+      <a href="about.html">O nás</a>
+      <a href="cart.html">Košík</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ⬅ NÁVRAT DO KOLEKCIE -->
+<a href="collection.html" class="back-link">← Kolekcia</a>
+
+<!-- HERO SECTION -->
+<section class="hero" style="padding:80px 8px 40px;">
+  <h1>Abstraktná Kolekcia</h1>
+  <p>Emócie, tvary a svetlo v čistej abstrakcii.</p>
+</section>
+
+<!-- GRID PRODUKTOV -->
+<section class="section" style="padding:40px 8%;">
+  <div class="grid" id="abstractGrid"></div>
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="close" id="modalCloseBtn">✕</div>
+
+    <img id="modalImg" src="" alt="">
+    <h3 id="modalName">
+      <span id="modalNameText"></span>
+      <span id="modalID" class="modal-id"></span>
+    </h3>
+    <p id="modalDesc"></p>
+    <p id="modalPrice"></p>
+
+    <label for="variantSelect">Varianty:</label>
+    <select id="variantSelect">
+      <option value="Klasik">Klasik</option>
+      <option value="Lacto-free">Lacto-free</option>
+      <option value="Bez lepku">Bez lepku</option>
+      <option value="Pre diabetikov">Pre diabetikov</option>
+      <option value="Veganske">Veganské</option>
+    </select>
+
+    <label for="visualSelect">Vizual variant:</label>
+    <select id="visualSelect">
+      <option value="clasik">Clasik</option>
+      <option value="limited">Limited</option>
+      <option value="uv">Flourescencne - UV</option>
+    </select>
+
+    <div class="modal-buttons">
+      <button id="modalUVBtn">UV Variant</button>
+      <button id="modalCartBtn">Pridať do košíka</button>
+      <button id="modalWishlistBtn">Pridať do wishlistu</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHISPER INFO BOX -->
+<div id="whisper"></div>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 Lumièra Noir · Návštevy: <span id="visits">0</span>
+</footer>
+
+<!-- ================= JS3 ================= -->
+<script src="js3/app.js"></script>
+<script src="js3/data/product.list.js"></script>
+<script src="js3/effects/effects.ambient.js"></script>
+<script src="js3/effects/effects.visual.js"></script>
+
+<script src="js3/behavior/behavior.core.js"></script>
+<script src="js3/behavior/behavior.memory.js"></script>
+<script src="js3/behavior/behavior.psychology.js"></script>
+
+<script src="js3/store/cart.store.js"></script>
+<script src="js3/store/wishlist.store.js"></script>
+
+<script src="js3/modals/modal.collection.js"></script>
+
+<!-- ================= PAGE SCRIPT ================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  if(!window.artifactsState){
+    window.artifactsState = {
+      behavior: { visits: 0, uvClicks: 0, age: 0 },
+      wishlist: [],
+      personality: { uvMode: true },
+      modalData: null
+    };
+  }
+
+  artifactsState.behavior.visits++;
+  localStorage.setItem("ln_visits", artifactsState.behavior.visits);
+  document.getElementById("visits").innerText =
+    artifactsState.behavior.visits;
+
+  const abstractProducts = (JS3.data && JS3.data.products && JS3.data.products.abstract)
+    ? JS3.data.products.abstract
+    : [];
+
+  const grid = document.getElementById("abstractGrid");
+
+  abstractProducts.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "product";
+    card.innerHTML = `
+      <img src="${item.image}" alt="${item.name}">
+      <h4>${item.name}</h4>
+      <p>${item.description}</p>
+      <p>${item.price}€</p>
+      <span class="product-id">${item.id}</span>
+    `;
+
+    card.addEventListener("click", () => {
+      JS3.modals.collection.openModal(item);
+
+      document.getElementById("modalNameText").innerText = item.name;
+      document.getElementById("modalID").innerText = item.id;
+      document.getElementById("modalDesc").innerText = item.description;
+      document.getElementById("modalPrice").innerText = item.price + "€";
+      document.getElementById("modalImg").src = item.image;
+    });
+
+    grid.appendChild(card);
+  });
+
+  // -----------------------------
+  // JS3 WHISPER HANDLER
+  // -----------------------------
+  const whisper = document.getElementById("whisper");
+  JS3.on("ui:whisper", data => {
+    whisper.innerText = data.text || "";
+    whisper.classList.add("show");
+    setTimeout(() => {
+      whisper.classList.remove("show");
+    }, data.duration || 4200);
+  });
+
+});
+</script>
+
+</body>
+</html>

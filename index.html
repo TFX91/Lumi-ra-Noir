@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumièra Noir – Domov</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
+  .hero h1 { font-size: clamp(3rem, 10vw, 6rem); color: var(--uv); text-shadow: 0 0 28px var(--uv); margin-bottom: 1rem; transition: all 1s ease; cursor: default; }
+  .hero p { font-size: 1.2rem; color: var(--text); opacity: 0.85; max-width: 600px; }
+  .cta { margin-top: 40px; padding: 16px 40px; border: 2px solid var(--uv); color: var(--uv); font-weight: 600; border-radius: 28px; text-transform: uppercase; cursor: pointer; transition: 0.4s; }
+  .cta:hover { background: var(--uv); color: #000; box-shadow: 0 0 20px var(--uv); }
+
+  /* Whisper info box */
+  #whisper {
+    position: fixed;
+    bottom: 60px; /* tesne nad footerom */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(17,17,17,0.9);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 24px;
+    font-size: 1rem;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    box-shadow: 0 0 20px var(--uv);
+    max-width: 90%;
+    z-index: 9999;
+  }
+  #whisper.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND EFFECTS -->
+<canvas id="bgParticles"></canvas>
+<div class="galaxy"></div>
+<div class="city"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Lumièra Noir</div>
+    <div class="menu">
+      <a href="index.html" class="active">Domov</a>
+      <a href="collection.html">Kolekcia</a>
+      <a href="vision.html">Vízia</a>
+      <a href="private-order.html">Vlastná objednávka</a>
+      <a href="about.html">O nás</a>
+      <a href="cart.html">Košík</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Vitajte v Lumièra Noir</h1>
+  <p>Exkluzívne artefakty a limitované edície luxusu. Objavte svet elegancie a sofistikovanosti, ktorý Vás očarí.</p>
+  <div class="cta" id="ctaExplore">Preskúmať Kolekciu</div>
+</section>
+
+<!-- WHISPER INFO BOX -->
+<div id="whisper"></div>
+
+<!-- FOOTER -->
+<footer>© 2026 Lumièra Noir · Návštevy: <span id="visits">0</span></footer>
+
+<!-- ================= JS3 ================= -->
+<script src="js3/app.js"></script>
+
+<script src="js3/effects/effects.ambient.js"></script>
+<script src="js3/effects/effects.visual.js"></script>
+
+<script src="js3/behavior/behavior.core.js"></script>
+<script src="js3/behavior/behavior.memory.js"></script>
+<script src="js3/behavior/behavior.psychology.js"></script>
+
+<script src="js3/store/cart.store.js"></script>
+<script src="js3/store/wishlist.store.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* 🔹 INIT ARTIFACTS STATE */
+  if(!window.artifactsState){
+    window.artifactsState = {
+      behavior: { visits: 0, uvClicks: 0, age: 0 },
+      wishlist: [],
+      personality: { uvMode: true },
+      modalData: null
+    };
+  }
+
+  artifactsState.behavior.visits++;
+  localStorage.setItem("ln_visits", artifactsState.behavior.visits);
+  document.getElementById("visits").innerText =
+    artifactsState.behavior.visits;
+
+  /* 🔹 INIT JS3 EFFECTS */
+  JS3.effects.ambient.init();
+
+  // 🔹 Hero text pulse
+  const heroText = document.querySelector(".hero h1");
+  let pulse = true;
+  setInterval(()=>{
+    heroText.style.textShadow = pulse
+      ? "0 0 28px var(--uv), 0 0 48px var(--uv)"
+      : "0 0 16px var(--uv)";
+    pulse = !pulse;
+  }, 1800);
+
+  /* 🔹 TRACK CLICK EVENT ON CTA */
+  const cta = document.getElementById("ctaExplore");
+  cta.addEventListener("click", () => {
+    JS3.emit("behavior:click", { element: "ctaExplore" });
+    window.location.href = 'collection.html';
+  });
+
+  /* 🔹 TRACK FOCUS / HOVER */
+  heroText.addEventListener("mouseenter", () => JS3.emit("behavior:focus", { element: "heroText" }));
+  cta.addEventListener("mouseenter", () => JS3.emit("behavior:focus", { element: "ctaExplore" }));
+
+  /* 🔹 JS3 WHISPER HANDLER */
+  const whisper = document.getElementById("whisper");
+  JS3.on("ui:whisper", data => {
+    whisper.innerText = data.text || "";
+    whisper.classList.add("show");
+    setTimeout(() => {
+      whisper.classList.remove("show");
+    }, data.duration || 4200);
+  });
+
+});
+</script>
+
+</body>
+</html>
