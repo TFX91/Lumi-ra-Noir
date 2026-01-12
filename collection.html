@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <style>
-/* Posun obsahu pod navbar, aby sa nezačínal pod ním */
+/* Posun obsahu pod navbar */
 body {
   padding-top: 80px; /* zhodná s výškou navbaru */
 }
@@ -15,7 +15,7 @@ body {
 /* Whisper info box */
 #whisper {
   position: fixed;
-  bottom: 60px; /* tesne nad footerom */
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   background: rgba(17,17,17,0.9);
@@ -34,6 +34,46 @@ body {
 #whisper.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* ===== MOBILE-FRIENDLY ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  body {
+    padding-top: 60px;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: auto;
+  }
+
+  nav .nav-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  nav .menu a {
+    display: block;
+    margin: 6px 0;
+  }
+
+  .collection-category h2 a {
+    font-size: 1.2rem;
+  }
+
+  .collection-category .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* zníženie vizuálnych efektov na mobile */
+  #bgParticles, .galaxy, .city {
+    display: none;
+  }
 }
 </style>
 </head>
@@ -148,9 +188,6 @@ body {
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
 
-  // -----------------------------
-  // Návštevy cez behavior
-  // -----------------------------
   if(!window.artifactsState){
     window.artifactsState = {
       behavior: { visits: 0, uvClicks: 0 },
@@ -162,12 +199,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   artifactsState.behavior.visits++;
   localStorage.setItem('ln_visits', artifactsState.behavior.visits);
-
   document.getElementById('visits').innerText = artifactsState.behavior.visits;
 
-  // -----------------------------
-  // Distribúcia produktov do kategórií – prvých 5 produktov
-  // -----------------------------
   const categories = {
     "category-kids": JS3.data.products.kids.slice(0,5),
     "category-special": JS3.data.products.special.slice(0,5),
@@ -194,14 +227,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
   });
 
-  // -----------------------------
-  // Aktivácia efektov JS3
-  // -----------------------------
   JS3.effects.ambient.init();
 
-  // -----------------------------
-  // JS3 WHISPER HANDLER
-  // -----------------------------
   const whisper = document.getElementById("whisper");
   JS3.on("ui:whisper", data => {
     whisper.innerText = data.text || "";
@@ -210,6 +237,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
       whisper.classList.remove("show");
     }, data.duration || 4200);
   });
+
+  /* Optional: hide heavy effects on mobile */
+  if(window.innerWidth < 768){
+    document.getElementById("bgParticles").style.display = "none";
+    document.querySelector(".galaxy").style.display = "none";
+    document.querySelector(".city").style.display = "none";
+  }
 
 });
 </script>
