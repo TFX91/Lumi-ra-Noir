@@ -9,57 +9,114 @@
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(to bottom, #1b0033, #05000a);
-    color: #f2f2f2;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    padding-top: 80px; /* posun obsahu pod navbar */
-  }
-  nav .menu a.active { color: #b36bff; text-shadow: 0 0 12px #b36bff; }
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 0 10%;
-  }
-  .hero h1 { font-size: clamp(3rem, 8vw, 6rem); color: #b36bff; margin-bottom: 24px; text-shadow: 0 0 20px #b36bff; }
-  .hero p { font-size: 1.2rem; max-width: 600px; }
-  section { padding: 80px 8%; }
-  h2 { font-family: 'Playfair Display', serif; color: #c9b46d; text-shadow: 0 0 10px #b36bff; margin-bottom: 24px; text-align: center; }
-  p { line-height: 1.6; margin-bottom: 1em; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
-  footer { text-align:center; padding:50px 0; font-size:.75rem; opacity:.6; }
-  .galaxy { position: fixed; inset:0; background:url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/demo-bg.jpg') center/cover no-repeat; opacity:.12; z-index:-2; }
-  .city { position: fixed; bottom:0; width:100%; height:220px; background:url('https://i.ibb.co/ZYW3VTp/cityscape.png') bottom center/cover no-repeat; opacity:.10; z-index:-1; }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom, #1b0033, #05000a);
+  color: #f2f2f2;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding-top: 80px; /* posun obsahu pod navbar */
+}
+nav .menu a.active { 
+  color: #b36bff; 
+  text-shadow: 0 0 12px #b36bff; 
+}
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 10%;
+}
+.hero h1 { 
+  font-size: clamp(3rem, 8vw, 6rem); 
+  color: #b36bff; 
+  margin-bottom: 24px; 
+  text-shadow: 0 0 20px #b36bff; 
+}
+.hero p { 
+  font-size: 1.2rem; 
+  max-width: 600px; 
+}
+section { 
+  padding: 80px 8%; 
+}
+h2 { 
+  font-family: 'Playfair Display', serif; 
+  color: #c9b46d; 
+  text-shadow: 0 0 10px #b36bff; 
+  margin-bottom: 24px; 
+  text-align: center; 
+}
+p { 
+  line-height: 1.6; 
+  margin-bottom: 1em; 
+  text-align: center; 
+  max-width: 800px; 
+  margin-left: auto; 
+  margin-right: auto; 
+}
+footer { 
+  text-align:center; 
+  padding:50px 0; 
+  font-size:.75rem; 
+  opacity:.6; 
+}
+.galaxy { 
+  position: fixed; 
+  inset:0; 
+  background:url('https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/demo-bg.jpg') center/cover no-repeat; 
+  opacity:.12; 
+  z-index:-2; 
+}
+.city { 
+  position: fixed; 
+  bottom:0; 
+  width:100%; 
+  height:220px; 
+  background:url('https://i.ibb.co/ZYW3VTp/cityscape.png') bottom center/cover no-repeat; 
+  opacity:.10; 
+  z-index:-1; 
+}
 
-  /* Whisper info box */
-  #whisper {
-    position: fixed;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: rgba(17,17,17,0.9);
-    color: #fff;
-    padding: 14px 28px;
-    border-radius: 24px;
-    font-size: 1rem;
-    text-align: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    box-shadow: 0 0 20px var(--uv);
-    max-width: 90%;
-    z-index: 9999;
-  }
-  #whisper.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+/* Whisper info box */
+#whisper {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(17,17,17,0.9);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 24px;
+  font-size: 1rem;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  box-shadow: 0 0 20px var(--uv);
+  max-width: 90%;
+  z-index: 9999;
+}
+#whisper.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== MOBILE-FRIENDLY ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .hero h1 { font-size: clamp(2rem, 10vw, 4rem); }
+  .hero p { font-size: 1rem; padding: 0 10px; }
+  section { padding: 40px 4%; }
+  h2 { font-size: 1.5rem; }
+  p { font-size: 0.95rem; max-width: 90%; }
+  .galaxy, .city { display: none; }
+  nav .nav-inner { flex-direction: column; gap: 12px; }
+  nav .menu a { display: block; margin: 6px 0; }
+}
 </style>
 </head>
 <body>
@@ -150,6 +207,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
       whisper.classList.remove("show");
     }, data.duration || 4200);
   });
+
+  // Skrytie vizuálnych efektov na mobile
+  if(window.innerWidth < 768){
+    document.querySelector('.galaxy').style.display = 'none';
+    document.querySelector('.city').style.display = 'none';
+  }
 });
 </script>
 
