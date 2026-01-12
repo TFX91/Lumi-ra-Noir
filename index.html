@@ -7,17 +7,56 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+
 <style>
-  body { overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
-  .hero h1 { font-size: clamp(3rem, 10vw, 6rem); color: var(--uv); text-shadow: 0 0 28px var(--uv); margin-bottom: 1rem; transition: all 1s ease; cursor: default; }
-  .hero p { font-size: 1.2rem; color: var(--text); opacity: 0.85; max-width: 600px; }
-  .cta { margin-top: 40px; padding: 16px 40px; border: 2px solid var(--uv); color: var(--uv); font-weight: 600; border-radius: 28px; text-transform: uppercase; cursor: pointer; transition: 0.4s; }
-  .cta:hover { background: var(--uv); color: #000; box-shadow: 0 0 20px var(--uv); }
+  body {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 10vw, 6rem);
+    color: var(--uv);
+    text-shadow: 0 0 28px var(--uv);
+    margin-bottom: 1rem;
+    transition: all 1s ease;
+    cursor: default;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text);
+    opacity: 0.85;
+    max-width: 600px;
+  }
+
+  .cta {
+    margin-top: 40px;
+    padding: 16px 40px;
+    border: 2px solid var(--uv);
+    color: var(--uv);
+    font-weight: 600;
+    border-radius: 28px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.4s;
+  }
+
+  .cta:hover {
+    background: var(--uv);
+    color: #000;
+    box-shadow: 0 0 20px var(--uv);
+  }
 
   /* Whisper info box */
   #whisper {
     position: fixed;
-    bottom: 60px; /* tesne nad footerom */
+    bottom: 60px;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
     background: rgba(17,17,17,0.9);
@@ -33,9 +72,48 @@
     max-width: 90%;
     z-index: 9999;
   }
+
   #whisper.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== MOBILE-FRIENDLY ADJUSTMENTS ===== */
+  @media (max-width: 768px) {
+    body {
+      overflow: auto;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav .nav-inner {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    nav .menu a {
+      display: block;
+      margin: 6px 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 8vw, 4rem);
+    }
+
+    .hero p {
+      font-size: 1rem;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+
+    .cta {
+      padding: 12px 24px;
+      font-size: 0.9rem;
+    }
+
+    #bgParticles, .galaxy, .city {
+      display: none; /* zníženie záťaže na mobile */
+    }
   }
 </style>
 </head>
@@ -76,14 +154,11 @@
 
 <!-- ================= JS3 ================= -->
 <script src="js3/app.js"></script>
-
 <script src="js3/effects/effects.ambient.js"></script>
 <script src="js3/effects/effects.visual.js"></script>
-
 <script src="js3/behavior/behavior.core.js"></script>
 <script src="js3/behavior/behavior.memory.js"></script>
 <script src="js3/behavior/behavior.psychology.js"></script>
-
 <script src="js3/store/cart.store.js"></script>
 <script src="js3/store/wishlist.store.js"></script>
 
@@ -111,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔹 Hero text pulse
   const heroText = document.querySelector(".hero h1");
   let pulse = true;
-  setInterval(()=>{
+  setInterval(()=> {
     heroText.style.textShadow = pulse
       ? "0 0 28px var(--uv), 0 0 48px var(--uv)"
       : "0 0 16px var(--uv)";
@@ -138,6 +213,13 @@ document.addEventListener("DOMContentLoaded", () => {
       whisper.classList.remove("show");
     }, data.duration || 4200);
   });
+
+  /* 🔹 OPTIONAL: hide heavy effects on mobile dynamically */
+  if(window.innerWidth < 768){
+    document.getElementById("bgParticles").style.display = "none";
+    document.querySelector(".galaxy").style.display = "none";
+    document.querySelector(".city").style.display = "none";
+  }
 
 });
 </script>
