@@ -51,7 +51,7 @@
 /* Whisper info box */
 #whisper {
   position: fixed;
-  bottom: 60px; /* tesne nad footerom */
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   background: rgba(17,17,17,0.9);
@@ -70,6 +70,56 @@
 #whisper.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* ===== MOBILE-FRIENDLY ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  nav .nav-inner {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  nav .menu a {
+    display: block;
+    margin: 6px 0;
+  }
+
+  .back-link {
+    top: 70px;
+    left: 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .hero p {
+    font-size: 1rem;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  #miniGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* skrytie náročných vizuálnych efektov */
+  #bgParticles, .galaxy, .city {
+    display: none;
+  }
 }
 </style>
 </head>
@@ -184,9 +234,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("visits").innerText =
     artifactsState.behavior.visits;
 
-  const miniProducts = JS3.data.products.mini;
+  const miniProducts = (JS3.data && JS3.data.products && JS3.data.products.mini)
+                       ? JS3.data.products.mini
+                       : [];
 
   const grid = document.getElementById("miniGrid");
+
   miniProducts.forEach(item=>{
     const card = document.createElement("div");
     card.className = "product";
@@ -209,9 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
     grid.appendChild(card);
   });
 
-  // -----------------------------
-  // JS3 WHISPER HANDLER
-  // -----------------------------
   const whisper = document.getElementById("whisper");
   JS3.on("ui:whisper", data => {
     whisper.innerText = data.text || "";
@@ -220,6 +270,13 @@ document.addEventListener("DOMContentLoaded", () => {
       whisper.classList.remove("show");
     }, data.duration || 4200);
   });
+
+  // skrytie vizuálnych efektov na mobile
+  if(window.innerWidth < 768){
+    document.getElementById("bgParticles").style.display = "none";
+    document.querySelector(".galaxy").style.display = "none";
+    document.querySelector(".city").style.display = "none";
+  }
 
 });
 </script>
